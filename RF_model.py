@@ -37,7 +37,7 @@ print("Shape fighter:", df_fighter.shape)
 # 1.2 FIGHT
 df_fight["gender"] = df_fight["gender"].map({'M': 0, 'F': 1})
 df_fight["title_fight"] = df_fight["title_fight"].map({'F': 0, 'T': 1})
-df_fight["winner"] = df_fight.apply(lambda row: 1 if row['winner'] == row ['f_1'] else 0, axis = 1)
+df_fight["winner"] = df_fight.apply(lambda row: 1 if row['winner'] == row['f_1'] else 0, axis = 1)
 def time_to_seconds(t):
     if isinstance(t, str) and ':' in t:
         minutes, seconds = map(int, t.split(':'))
@@ -144,7 +144,9 @@ fighter_wins['finish_ratio'] = fighter_wins.apply(lambda row: row['cum_finish'] 
 fighter_wins['ko_ratio'] = fighter_wins.apply(lambda row: row['cum_ko'] / row['cum_wins'] if row['cum_wins'] > 0 else 0, axis=1)
 fighter_wins['sub_ratio'] = fighter_wins.apply(lambda row: row['cum_sub'] / row['cum_wins'] if row['cum_wins'] > 0 else 0, axis=1)
 print(fighter_wins.head(20))
-# here i can also calculate: ko_ratio, sub_ratio, avg_ctrl_time, strikes_per_match, significant_strikes_per_match, takedown_rate_per_match of the past match
+
+
+# here i can also calculate: avg_ctrl_time, strikes_per_match, significant_strikes_per_match, takedown_rate_per_match of the past match
 
 
 df.drop(["fighter_height_cm_1", "fighter_height_cm_2", "fighter_weight_lbs_1", "fighter_weight_lbs_2", "fighter_reach_cm_1", "fighter_reach_cm_2", "fighter_w_1", "fighter_w_2", "fighter_l_1", "fighter_l_2", "fighter_d_1", "fighter_d_2", "fighter_nc_dq_1", "fighter_nc_dq_2","event_date", "fighter_dob_1", "fighter_dob_2", "fighter_age_1", "fighter_age_2",'knockdowns_f1stat', 'total_strikes_att_f1stat','total_strikes_succ_f1stat', 'sig_strikes_att_f1stat','sig_strikes_succ_f1stat', 'takedown_att_f1stat','takedown_succ_f1stat', 'submission_att_f1stat', 'reversals_f1stat','ctrl_time_f1stat', 'knockdowns_f2stat', 'total_strikes_att_f2stat','total_strikes_succ_f2stat', 'sig_strikes_att_f2stat','sig_strikes_succ_f2stat', 'takedown_att_f2stat','takedown_succ_f2stat', 'submission_att_f2stat', 'reversals_f2stat','ctrl_time_f2stat'], axis=1, inplace=True)
