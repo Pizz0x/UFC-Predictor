@@ -115,7 +115,7 @@ df["fighter_reach_diff"] = df["fighter_reach_cm_1"] - df["fighter_reach_cm_2"]
 df["fighter_winratio_1"] = df["fighter_w_1"] / (df["fighter_w_1"] + df["fighter_l_1"] + df["fighter_d_1"])
 df["fighter_winratio_2"] = df["fighter_w_2"] / (df["fighter_w_2"] + df["fighter_l_2"] + df["fighter_d_2"])
 df["fighter_experience_diff"] = (df["fighter_w_1"] + df["fighter_l_1"] + df["fighter_d_1"]) - (df["fighter_w_2"] + df["fighter_l_2"] + df["fighter_d_2"])
-# we can also calculate the difference in the stats of the 2 fighter for the fight: differences in # of strikes and ratio of successfull and significant strikes; same things with takedown, knockouts control_time and submission attempted
+# we can also calculate the difference in the stats of the 2 fighter for the fight: differences in # of strikes and ratio of successfull and significant strikes; same things with takedown, knockouts control_time and submission attempted. To do this we have to use past event since we cannot use the present one or future ones
 #print(df.columns)
 df["knockdown_diff"] = df['knockdowns_f1stat'] - df['knockdowns_f2stat']
 df["strikes_diff"] = df['total_strikes_succ_f1stat'] - df['total_strikes_succ_f2stat']
@@ -126,7 +126,7 @@ df["takedown_ratio_diff"] = (df['takedown_succ_f1stat']/(df['takedown_att_f1stat
 df["submission_diff"] = df["submission_att_f1stat"] - df["submission_att_f2stat"]
 df["ctrl_time_diff"] = df["ctrl_time_f1stat"] - df["ctrl_time_f2stat"]
 
-# we can also calculate the submission rate and other properties like strikes per min or control time to check if the guy is a striker or a grappler, to do this we have to use past event since we cannot use the present one or future ones
+# we can calculate stats for the fighter like the finish ratio and other ratio like the submission one and the ko one
 df["event_date"] = pd.to_datetime(df["event_date"])
 finish_cols = ['result_KO/TKO', 'result_Submission']
 df["is_finish"] = df[finish_cols].fillna(0).astype(int).sum(axis=1) > 0
@@ -144,9 +144,24 @@ fighter_wins['finish_ratio'] = fighter_wins.apply(lambda row: row['cum_finish'] 
 fighter_wins['ko_ratio'] = fighter_wins.apply(lambda row: row['cum_ko'] / row['cum_wins'] if row['cum_wins'] > 0 else 0, axis=1)
 fighter_wins['sub_ratio'] = fighter_wins.apply(lambda row: row['cum_sub'] / row['cum_wins'] if row['cum_wins'] > 0 else 0, axis=1)
 print(fighter_wins.head(20))
-
-
-# here i can also calculate: avg_ctrl_time, strikes_per_match, significant_strikes_per_match, takedown_rate_per_match of the past match
+# we can also calculate other properties for the fighter like strikes and significant strikes per min or average control time and takedown per match to check if the guy is a striker or a grappler
+df_f1 = df[["f_1", "event_date", "is_finish", 'fight_duration', 'total_strikes_succ_f1stat', 'total_strikes_att_f1stat', 'sig_strikes_succ_f1stat', 'ctrl_time_f1stat', 'takedown_succ_f1stat', 'takedown_att_f1stat']].copy()
+df_f1 = df_f1.rename(columns={"f_1": "fighter"})
+df_f2 = df[["f_2", "event_date", "is_finish", 'fight_duration', 'total_strikes_succ_f2stat', 'total_strikes_att_f2stat', 'sig_strikes_succ_f2stat', 'ctrl_time_f2stat', 'takedown_succ_f2stat', 'takedown_att_f2stat']].copy()
+df_f2 = df_f2.rename(columns={"f_2": "fighter"})
+fighter_stats = pd.concat([df_f1, df_f2], ignore_index=True)
+fighter_stats = fighter_wins.sort_values(by="event_date")
+fighter_stats["cum_strikes_succ"] = fighter_wins.groupby("fighter")["is_finish"].cumsum().shift(1)
+fighter_wins["cum_strikes_att"] = fighter_wins.groupby("fighter")["result_KO/TKO"].cumsum().shift(1)
+fighter_wins["cum_sign_strikes"] = fighter_wins.groupby("fighter")["result_Submission"].cumsum().shift(1)
+fighter_wins["cum_ctrl_time"] = fighter_wins.groupby("fighter")["result_Submission"].cumsum().shift(1)
+fighter_wins["cum_takedown_succ"] = fighter_wins.groupby("fighter")["result_Submission"].cumsum().shift(1)
+fighter_wins["cum_takedown_att"] = fighter_wins.groupby("fighter")["result_Submission"].cumsum().shift(1)
+fighter_wins["cum_match"] = fighter_wins.groupby("fighter").cumcount()
+fighter_wins['finish_ratio'] = fighter_wins.apply(lambda row: row['cum_finish'] / row['cum_wins'] if row['cum_wins'] > 0 else 0,axis=1)
+fighter_wins['ko_ratio'] = fighter_wins.apply(lambda row: row['cum_ko'] / row['cum_wins'] if row['cum_wins'] > 0 else 0, axis=1)
+fighter_wins['sub_ratio'] = fighter_wins.apply(lambda row: row['cum_sub'] / row['cum_wins'] if row['cum_wins'] > 0 else 0, axis=1)
+print(fighter_wins.head(20))
 
 
 df.drop(["fighter_height_cm_1", "fighter_height_cm_2", "fighter_weight_lbs_1", "fighter_weight_lbs_2", "fighter_reach_cm_1", "fighter_reach_cm_2", "fighter_w_1", "fighter_w_2", "fighter_l_1", "fighter_l_2", "fighter_d_1", "fighter_d_2", "fighter_nc_dq_1", "fighter_nc_dq_2","event_date", "fighter_dob_1", "fighter_dob_2", "fighter_age_1", "fighter_age_2",'knockdowns_f1stat', 'total_strikes_att_f1stat','total_strikes_succ_f1stat', 'sig_strikes_att_f1stat','sig_strikes_succ_f1stat', 'takedown_att_f1stat','takedown_succ_f1stat', 'submission_att_f1stat', 'reversals_f1stat','ctrl_time_f1stat', 'knockdowns_f2stat', 'total_strikes_att_f2stat','total_strikes_succ_f2stat', 'sig_strikes_att_f2stat','sig_strikes_succ_f2stat', 'takedown_att_f2stat','takedown_succ_f2stat', 'submission_att_f2stat', 'reversals_f2stat','ctrl_time_f2stat'], axis=1, inplace=True)
