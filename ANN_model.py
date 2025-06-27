@@ -257,36 +257,53 @@ from tensorflow.keras import models
 from tensorflow.keras import layers
 from tensorflow.keras import optimizers
 from tensorflow.keras import Input
+from tensorflow.keras.callbacks import EarlyStopping
 
 model =  models.Sequential()
 
 model.add( Input(shape=(X_train.shape[1],)) )
-model.add( layers.Dense(24, activation='sigmoid'))
-model.add( layers.Dense(8, activation='sigmoid'))
+model.add( layers.Dense(24, activation='relu'))
+model.add( layers.Dense(8, activation='relu'))
 model.add( layers.Dense(1, activation='sigmoid'))
 
 model.compile( optimizer=optimizers.Adam(learning_rate=.01),
               loss='binary_crossentropy', metrics=['acc'])
-hist = model.fit(x=X_train, y=y_train, epochs=100, validation_split=0.2, verbose=0)
+
+early_stop = EarlyStopping(monitor='val_loss', patience=10, min_delta=0.001, restore_best_weights=True)
+
+hist = model.fit(x=X_train, y=y_train, epochs=100, validation_split=0.2, verbose=0, callbacks=[early_stop])
+
+test_loss, test_acc = model.evaluate(X_pred_stand, y_pred)
+print(f"Test Accuracy: {test_acc:.3f}")
 
 # Plot the accuracy and the loss function values for the training set and the validation set -> to see if there is overfit
-import matplotlib.pyplot as plt
-print(hist.history.keys())
+# import matplotlib.pyplot as plt
+# print(hist.history.keys())
 
-fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(9,6))
-axes[0].plot(hist.history['acc'], label='Train')
-axes[0].plot(hist.history['val_acc'], label='Validation')
-axes[0].set_title("Accuracy History", fontsize=18)
-axes[0].set_xlabel("Epochs", fontsize=18)
-axes[0].legend(fontsize=20)
+# fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(9,6))
+# axes[0].plot(hist.history['acc'], label='Train')
+# axes[0].plot(hist.history['val_acc'], label='Validation')
+# axes[0].set_title("Accuracy History", fontsize=18)
+# axes[0].set_xlabel("Epochs", fontsize=18)
+# axes[0].legend(fontsize=20)
 
-axes[1].plot(hist.history['loss'], label='Train')
-axes[1].plot(hist.history['val_loss'], label='Validation')
-axes[1].set_title("Loss History", fontsize=18)
-axes[1].set_xlabel("Epochs", fontsize=18)
-axes[1].legend(fontsize=20)
-plt.tight_layout()
-plt.show()
+# axes[1].plot(hist.history['loss'], label='Train')
+# axes[1].plot(hist.history['val_loss'], label='Validation')
+# axes[1].set_title("Loss History", fontsize=18)
+# axes[1].set_xlabel("Epochs", fontsize=18)
+# axes[1].legend(fontsize=20)
+# plt.tight_layout()
+# plt.show()
+
+# features impact on the prediction task:
+first_layer_weights = model.layers[0].get_weights()[0] # shape: (n_features, n_hidden_units) -> we need the number of features
+feature_importance = np.sum(np.abs(first_layer_weights), axis=1) # compute the importance by summing the values given from each synapsis
+feature_importance = feature_importance / np.sum(feature_importance) # normalization
+feature_names = X_pred.columns
+importance_df = pd.DataFrame({'feauture': feature_names, 'importance': feature_importance})
+importance_df = importance_df.sort_values(by='importance', ascending=False)
+print(importance_df)
+
 
 # The results:
 predictions = X_pred[["f_1", "f_2"]].copy()
@@ -299,7 +316,7 @@ predictions = predictions.merge(fighters_name.add_suffix('_2'), left_on=["f_2"],
 predictions = predictions[["fighter_f_name_1", "fighter_l_name_1", "fighter_f_name_2", "fighter_l_name_2","predicted_winner","real_winner"]]
 print(predictions)
 
-correct_pred = (predictions["predicted_winner"] == predictions["real_winner"]).sum()
-total_pred = len(predictions)
-print("Accuracy: ", correct_pred / total_pred)
+# correct_pred = (predictions["predicted_winner"] == predictions["real_winner"]).sum()
+# total_pred = len(predictions)
+# print("Accuracy: ", correct_pred / total_pred)
 
