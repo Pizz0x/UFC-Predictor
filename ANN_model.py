@@ -267,10 +267,12 @@ model.add( layers.Dense(1, activation='sigmoid'))
 
 model.compile( optimizer=optimizers.Adam(learning_rate=.01),
               loss='binary_crossentropy', metrics=['acc'])
-hist = model.fit(x=X_train, y=y_train, epochs=100, validation_split=0.2, verbose=1)
+hist = model.fit(x=X_train, y=y_train, epochs=100, validation_split=0.2, verbose=0)
 
 # Plot the accuracy and the loss function values for the training set and the validation set -> to see if there is overfit
 import matplotlib.pyplot as plt
+print(hist.history.keys())
+
 fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(9,6))
 axes[0].plot(hist.history['acc'], label='Train')
 axes[0].plot(hist.history['val_acc'], label='Validation')
@@ -283,6 +285,7 @@ axes[1].plot(hist.history['val_loss'], label='Validation')
 axes[1].set_title("Loss History", fontsize=18)
 axes[1].set_xlabel("Epochs", fontsize=18)
 axes[1].legend(fontsize=20)
+plt.tight_layout()
 plt.show()
 
 # The results:
@@ -295,4 +298,8 @@ predictions = predictions.merge(fighters_name.add_suffix('_1'), left_on=["f_1"],
 predictions = predictions.merge(fighters_name.add_suffix('_2'), left_on=["f_2"], right_on=["fighter_id_2"])
 predictions = predictions[["fighter_f_name_1", "fighter_l_name_1", "fighter_f_name_2", "fighter_l_name_2","predicted_winner","real_winner"]]
 print(predictions)
+
+correct_pred = (predictions["predicted_winner"] == predictions["real_winner"]).sum()
+total_pred = len(predictions)
+print("Accuracy: ", correct_pred / total_pred)
 
