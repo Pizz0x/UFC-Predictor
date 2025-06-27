@@ -1,12 +1,9 @@
 import numpy as np
 import pandas as pd
-import shap
 
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 
 df_event = pd.read_csv("data/ufc_event_data.csv")
@@ -249,36 +246,17 @@ X_train = df_train.drop(columns=["winner"])
 y_train = df_train["winner"]
 X_pred = df_pred.drop(columns=["winner"])
 y_pred = df_pred["winner"]
-scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_pred_stand = scaler.transform(X_pred)
 
-# This is the hyper-parameter tuning since we only have 1 significative parameter
-model = SVC(probability=True)
-parameters = { 'C': [0.01, 0.1, 1.0, 10.0, 100.0],
-              'kernel': ['linear', 'rbf']}
-tuned_model = GridSearchCV(model, parameters, cv=5, verbose=1, n_jobs=-1)
-tuned_model.fit(X_train, y_train)
+# In this file we will use an Artificial Neural Network for the classification task
+# Neural Networks need data to be standardized, in this way they all start with the same impact
+standardizer = StandardScaler()
+X_train = standardizer.fit_transform(X_train)
+X_pred_stand = standardizer.transform(X_pred)
 
-print ("Best Score: {:.3f}".format(tuned_model.best_score_) )
-print ("Best Params: ", tuned_model.best_params_)
-test_acc = accuracy_score(y_true = y_pred, y_pred = tuned_model.predict(X_pred_stand) )
-print("Test Accuracy: {:.3f}".format(test_acc) )
+from tensorflow.keras import models
+from tensorflow.keras import layers
+from tensorflow.keras import optimizers
+from tensorflow.keras import Input
 
-# explainer = shap.Explainer(model.predict_proba, X_train)
-# shap_values = explainer(X_pred)
-# shap.summary_plot(shap_values, X_pred, feature_names=X_train.columns)
-
-
-# for feature, importance in zip(X_train.columns, tuned_model.best_estimator_.feature_importances_):
-#     print(f"{feature}: {importance:.4f}")
-
-# now i have a dataframe fighters_name that is composed by the id and the names, our dataframe for the prediction and the response for each row. We are curious to see which are the prediction for each fight
-predictions = X_pred[["f_1", "f_2"]].copy()
-predictions["predicted_winner"] = tuned_model.predict(X_pred_stand)
-predictions["real_winner"] = y_pred.values
-
-predictions = predictions.merge(fighters_name.add_suffix('_1'), left_on=["f_1"], right_on=["fighter_id_1"])
-predictions = predictions.merge(fighters_name.add_suffix('_2'), left_on=["f_2"], right_on=["fighter_id_2"])
-predictions = predictions[["fighter_f_name_1", "fighter_l_name_1", "fighter_f_name_2", "fighter_l_name_2","predicted_winner","real_winner"]]
-print(predictions)
+model =  models.Sequential()
+model.add( Input(shape=(X_train.shape[1],)))
