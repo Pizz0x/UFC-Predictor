@@ -259,7 +259,40 @@ from tensorflow.keras import optimizers
 from tensorflow.keras import Input
 
 model =  models.Sequential()
+
 model.add( Input(shape=(X_train.shape[1],)) )
 model.add( layers.Dense(24, activation='sigmoid'))
 model.add( layers.Dense(8, activation='sigmoid'))
 model.add( layers.Dense(1, activation='sigmoid'))
+
+model.compile( optimizer=optimizers.Adam(learning_rate=.01),
+              loss='binary_crossentropy', metrics=['acc'])
+hist = model.fit(x=X_train, y=y_train, epochs=100, validation_split=0.2, verbose=1)
+
+# Plot the accuracy and the loss function values for the training set and the validation set -> to see if there is overfit
+import matplotlib.pyplot as plt
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(9,6))
+axes[0].plot(hist.history['acc'], label='Train')
+axes[0].plot(hist.history['val_acc'], label='Validation')
+axes[0].set_title("Accuracy History", fontsize=18)
+axes[0].set_xlabel("Epochs", fontsize=18)
+axes[0].legend(fontsize=20)
+
+axes[1].plot(hist.history['loss'], label='Train')
+axes[1].plot(hist.history['val_loss'], label='Validation')
+axes[1].set_title("Loss History", fontsize=18)
+axes[1].set_xlabel("Epochs", fontsize=18)
+axes[1].legend(fontsize=20)
+plt.show()
+
+# The results:
+predictions = X_pred[["f_1", "f_2"]].copy()
+pred_probs = model.predict(X_pred_stand)
+predictions["predicted_winner"] = (pred_probs > 0.5).astype(int)
+predictions["real_winner"] = y_pred.values
+
+predictions = predictions.merge(fighters_name.add_suffix('_1'), left_on=["f_1"], right_on=["fighter_id_1"])
+predictions = predictions.merge(fighters_name.add_suffix('_2'), left_on=["f_2"], right_on=["fighter_id_2"])
+predictions = predictions[["fighter_f_name_1", "fighter_l_name_1", "fighter_f_name_2", "fighter_l_name_2","predicted_winner","real_winner"]]
+print(predictions)
+
