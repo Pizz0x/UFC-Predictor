@@ -259,4 +259,7 @@ from tensorflow.keras import optimizers
 from tensorflow.keras import Input
 
 model =  models.Sequential()
-model.add( Input(shape=(X_train.shape[1],)))
+model.add( Input(shape=(X_train.shape[1],)) )
+model.add( layers.Dense(24, activation='sigmoid'))
+model.add( layers.Dense(8, activation='sigmoid'))
+model.add( layers.Dense(1, activation='sigmoid'))
