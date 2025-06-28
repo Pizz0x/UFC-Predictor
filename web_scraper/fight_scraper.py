@@ -32,10 +32,10 @@ for event in events:
     fights = soup.find_all('tr', class_="b-fight-details__table-row b-fight-details__table-row__hover js-fight-details-click")
     for fight in fights:
         fight_link = fight.find('a', class_='b-flag')['href']
+        f1_link = fight.find_all('a', class_="b-link b-link_style_black")[0]['href']
+        f2_link = fight.find_all('a', class_="b-link b-link_style_black")[1]['href']
         fight_response = requests.get(fight_link)
         fight_info = BeautifulSoup(fight_response.content, 'html.parser')
-        f1_link = fight_info.find_all('a', class_="b-link b-fight-details__person-link")[0]['href']
-        f2_link = fight_info.find_all('a', class_="b-link b-fight-details__person-link")[1]['href']
         f1_outcome = fight_info.find_all('i', class_="b-fight-details__person-status")[0].text.strip()
         f2_outcome = fight_info.find_all('i', class_="b-fight-details__person-status")[1].text.strip()
         weightclass = fight_info.find('i', class_='b-fight-details__fight-title').text.strip()
