@@ -8,7 +8,7 @@ import re
 from datetime import datetime
 
 # FIGHTERS
-url = "http://ufcstats.com/statistics/fighters?char=a&page=all"
+url = "http://ufcstats.com/statistics/fighters"
 response = requests.get(url)
 soup = BeautifulSoup(response.content, 'html.parser')
 fighters = soup.find_all('tr', class_='b-statistics__table-row')
@@ -66,9 +66,9 @@ for fighter in fighters:
     reach = get_reach(get_li(li_items[2]))
     stance = get_li(li_items[3])
     dob = get_date(get_li(li_items[4]))
-    data.append([name, int(win), int(lost), int(draw), nc, height, weight, reach, stance, dob])
+    data.append([name, int(win), int(lost), int(draw), nc, height, weight, reach, stance, dob, link])
 
-df_fighter = pd.DataFrame(data, columns=["fighter_name", "fighter_win", "fighter_lost", "fighter_draw", "fighter_nc", "fighter_height", "fighter_weight", "fighter_reach", "fighter_stance", "fighter_DoB"])
+df_fighter = pd.DataFrame(data, columns=["fighter_name", "fighter_win", "fighter_lost", "fighter_draw", "fighter_nc", "fighter_height", "fighter_weight", "fighter_reach", "fighter_stance", "fighter_DoB", "fighter_link"])
 
 if os.path.exists('../data/df_fighters.csv'):
     os.remove('../data/df_fighters.csv')
