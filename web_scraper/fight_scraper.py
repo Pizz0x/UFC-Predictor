@@ -7,7 +7,7 @@ import numpy as np
 import re
 from datetime import datetime
 
-url = "http://ufcstats.com/statistics/events/completed"
+url = "http://ufcstats.com/statistics/events/completed?page=all"
 response = requests.get(url)
 soup = BeautifulSoup(response.content, 'html.parser')
 events = soup.find_all('tr', class_="b-statistics__table-row") # we get the insights from an html table, row by row
@@ -82,7 +82,6 @@ for event in events:
 fight_df = pd.DataFrame(fight_data, columns=["fight_link", "event_link", "f1_link", 'f2_link','winner_link', 'f1_outcome', 'f2_outcome', 'sex', 'titlefight', 'weightclass', 'result', 'round', 'time', 'round_format'])
 stats_df = pd.DataFrame(stats_data, columns=['fight_link', 'fighter_link', 'knockdowns', 'sign_strikes_succ', 'sign_strikes_att', 'total_strikes_succ', 'total_strikes_att', 'takedowns_succ', 'takedowns_att', 'sub', 'ctrl'])
 
-print(fight_df.head(20))
-print(stats_df.head(40))
+
 
     
