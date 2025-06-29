@@ -77,12 +77,14 @@ def fight_scraper(url):
                 f1_takedowns_succ, f1_takedowns_tot, f2_takedowns_succ, f2_takedowns_tot = get_succ_tot(*get_stat(stats_info[5]))
                 f1_sub, f2_sub = get_stat(stats_info[7])
                 f1_ctrl, f2_ctrl = get_stat(stats_info[9])
-                stats_data.append([fight_link, f1_link, int(f1_knockdowns), int(f1_sign_strikes_succ), int(f1_sign_strikes_tot), int(f1_total_strikes_succ), int(f1_total_strikes_tot), int(f1_takedowns_succ), int(f1_takedowns_tot), int(f1_sub), int(f1_ctrl)])
-                stats_data.append([fight_link, f2_link, int(f2_knockdowns), int(f2_sign_strikes_succ), int(f2_sign_strikes_tot), int(f2_total_strikes_succ), int(f2_total_strikes_tot), int(f2_takedowns_succ), int(f2_takedowns_tot), int(f2_sub), int(f2_ctrl)])
+                stats_data.append([fight_link, f1_link, int(f1_knockdowns), int(f1_sign_strikes_succ), int(f1_sign_strikes_tot), int(f1_total_strikes_succ), int(f1_total_strikes_tot), int(f1_takedowns_succ), int(f1_takedowns_tot), int(f1_sub), f1_ctrl])
+                stats_data.append([fight_link, f2_link, int(f2_knockdowns), int(f2_sign_strikes_succ), int(f2_sign_strikes_tot), int(f2_total_strikes_succ), int(f2_total_strikes_tot), int(f2_takedowns_succ), int(f2_takedowns_tot), int(f2_sub), f2_ctrl])
             else:
                 f1_outcome = f2_outcome = winner_link = result = round = time = ''
                 round_format = 5 if (title_fight or c==1) else 3
             fight_data.append([fight_link, event_link, f1_link, f2_link, winner_link, f1_outcome, f2_outcome, sex, title_fight, weightclass, result, int(round), time, round_format])
+        if (event_link == 'http://ufcstats.com/event-details/e06fd1260ac865a7'):
+            break
 
     df_fights = pd.DataFrame(fight_data, columns=["fight_link", "event_link", "f1_link", 'f2_link','winner_link', 'f1_outcome', 'f2_outcome', 'sex', 'titlefight', 'weightclass', 'result', 'finish_round', 'time', 'round_format'])
     df_stats = pd.DataFrame(stats_data, columns=['fight_link', 'fighter_link', 'knockdowns', 'sign_strikes_succ', 'sign_strikes_att', 'total_strikes_succ', 'total_strikes_att', 'takedowns_succ', 'takedowns_att', 'sub', 'ctrl'])

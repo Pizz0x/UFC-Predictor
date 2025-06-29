@@ -36,6 +36,7 @@ def event_scraper(url):
         location = event.find_all('td')[1].text.strip()
         city, country = get_location(location)
         link = event.find('a')['href']
+        print(link)
         data.append([name, date, city, country, link]) # we save the useful data in a list, to then trasform it to a dataframe
 
     df_event = pd.DataFrame(data, columns=["event_name", "event_date", "event_city", "event_country", "event_link"])

@@ -58,6 +58,7 @@ def fighter_scraper():
             
 
             link = fighter.find_all('a')[0]['href']
+            print(link)
             response = requests.get(link)
             fighter_info= BeautifulSoup(response.content, 'html.parser')
             name = fighter_info.find('span', class_='b-content__title-highlight').text.strip()
