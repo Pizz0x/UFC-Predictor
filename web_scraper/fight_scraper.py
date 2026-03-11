@@ -80,7 +80,8 @@ def fight_scraper(url):
                 stats_data.append([fight_link, f1_link, int(f1_knockdowns), int(f1_sign_strikes_succ), int(f1_sign_strikes_tot), int(f1_total_strikes_succ), int(f1_total_strikes_tot), int(f1_takedowns_succ), int(f1_takedowns_tot), int(f1_sub), f1_ctrl])
                 stats_data.append([fight_link, f2_link, int(f2_knockdowns), int(f2_sign_strikes_succ), int(f2_sign_strikes_tot), int(f2_total_strikes_succ), int(f2_total_strikes_tot), int(f2_takedowns_succ), int(f2_takedowns_tot), int(f2_sub), f2_ctrl])
             else:
-                f1_outcome = f2_outcome = winner_link = result = round = time = ''
+                f1_outcome = f2_outcome = winner_link = result = time = ''
+                round = np.nan
                 round_format = 5 if (title_fight or c==1) else 3
             fight_data.append([fight_link, event_link, f1_link, f2_link, winner_link, f1_outcome, f2_outcome, sex, title_fight, weightclass, result, int(round), time, round_format])
         if (event_link == 'http://ufcstats.com/event-details/e06fd1260ac865a7'):

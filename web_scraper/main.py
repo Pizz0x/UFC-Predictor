@@ -8,7 +8,7 @@ link_next = "http://ufcstats.com/statistics/events/upcoming"
 
 # # Get the Events
 past_events = event_scraper(link_past)
-link_next = event_scraper(link_next)
+next_events = event_scraper(link_next)
 
 # # Get the Fighters
 fighters = fighter_scraper()
@@ -26,7 +26,7 @@ if os.path.exists('../data/past_events.csv'):
 past_events.to_csv('../data/past_events.csv', index=True, index_label='event_id', sep=',')
 if os.path.exists('../data/next_events.csv'):
     os.remove('../data/next_events.csv')
-past_events.to_csv('../data/next_events.csv', index=True, index_label='event_id', sep=',')
+next_events.to_csv('../data/next_events.csv', index=True, index_label='event_id', sep=',')
 
 # FIGHTERS
 if os.path.exists('../data/fighters.csv'):
@@ -48,5 +48,3 @@ past_stats.to_csv('../data/past_stats.csv', index=True, index_label='fighter_id'
 if os.path.exists('../data/next_stats.csv'):
     os.remove('../data/next_stats.csv')
 next_stats.to_csv('../data/next_stats.csv', index=True, index_label='fighter_id', sep=',')
-
-
