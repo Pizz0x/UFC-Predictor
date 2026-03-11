@@ -19,7 +19,7 @@ Subsequently, different ML algorithms are trained on the obtained data to predic
 * `data_cleaning.py` - Script for data cleaning and feature engineering.
 * `*_model.py` - Scripts containing the training and evalutation of the different models.
 
-## Models <a name="modelli-utilizzati"></a>
+## 🤖 Models <a name="modelli-utilizzati"></a>
 To evaluate which ML algorithm fits better this supervised learning tast, the following models have been implemented and compared:
 * **ANN (Artificial Neural Network)** - Neural networks that catch complex non-linear relations.
 * **RF (Random Forest)** - Ensamble method rubust against overfitting.
