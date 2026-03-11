@@ -15,9 +15,9 @@ Then thanks to a script it cleans them and with some feature engineering extract
 Subsequently, different ML algorithms are trained on the obtained data to predict the winner of future matches.
 
 ## 📁 Structure of the Project <a name="struttura"></a>
-* `web_scraper/` - Scripts to get raw data from the web, *they must be runned to get the data in the data folder*.
-* `data_cleaning.py` - Script for data cleaning and feature engineering.
-* `*_model.py` - Scripts containing the training and evalutation of the different models.
+* `web_scraper/` - Scripts to get raw data from the web, *`main.py` must be runned to collect required data from the UFC website*.
+* `scripts/` - Script for data cleaning and feature engineering.
+* `models/` - Scripts containing the training and evalutation of the different models.
 
 ## 🤖 Models <a name="modelli-utilizzati"></a>
 To evaluate which ML algorithm fits better this supervised learning tast, the following models have been implemented and compared:

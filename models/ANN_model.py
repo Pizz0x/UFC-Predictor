@@ -3,21 +3,28 @@ import pandas as pd
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score
-from data_cleaning import data_merging, feature_engineering
+
+import sys, os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
+from scripts.data_cleaning import data_merging, feature_engineering
+
 from tensorflow.keras import models
 from tensorflow.keras import layers
 from tensorflow.keras import optimizers
 from tensorflow.keras import Input
 from tensorflow.keras.callbacks import EarlyStopping
 
-df_event = pd.read_csv("data/ufc_event_data.csv")
-df_fight = pd.read_csv("data/ufc_fight_data.csv")
-df_fight_stat = pd.read_csv("data/ufc_fight_stat_data.csv")
-df_fighter = pd.read_csv("data/ufc_fighter_data.csv")
+df_event = pd.read_csv("../data/ufc_event_data.csv")
+df_fight = pd.read_csv("../data/ufc_fight_data.csv")
+df_fight_stat = pd.read_csv("../data/ufc_fight_stat_data.csv")
+df_fighter = pd.read_csv("../data/ufc_fighter_data.csv")
 
 
 # dataframe to save the names of the fighter:
-fighters_name = pd.read_csv("data/ufc_fighter_data.csv")
+fighters_name = pd.read_csv("../data/ufc_fighter_data.csv")
 fighters_name.drop(["fighter_nickname", "fighter_height_cm", "fighter_weight_lbs", "fighter_reach_cm", "fighter_stance", "fighter_dob", "fighter_w", "fighter_l", "fighter_d", "fighter_nc_dq", "fighter_url"], axis=1, inplace=True)
 
 df = data_merging(df_event, df_fight, df_fight_stat, df_fighter)
